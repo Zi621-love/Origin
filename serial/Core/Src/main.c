@@ -45,7 +45,7 @@ DMA_HandleTypeDef hdma_usart2_tx;
 DMA_HandleTypeDef hdma_usart2_rx;
 
 /* USER CODE BEGIN PV */
-uint8_t receiveData[2];
+uint8_t receiveData[50];
 //	char message[] = "Hello World";
 /* USER CODE END PV */
 
@@ -78,6 +78,15 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart){
 		  		HAL_GPIO_WritePin(LED_BLUE_GPIO_Port, LED_BLUE_Pin, state);
 		  	}
 		  	HAL_UART_Receive_DMA(&huart2, receiveData, 2);
+}
+
+void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size){
+	if(huart == &huart2){
+		HAL_UART_Transmit_DMA(huart, receiveData, Size);
+
+		HAL_UARTEx_ReceiveToIdle_DMA(huart, receiveData, sizeof(receiveData));
+		__HAL_DMA_DISABLE_IT(&hdma_usart2_rx,DMA_IT_HT);
+	}
 }
 /* USER CODE END 0 */
 
@@ -113,8 +122,9 @@ int main(void)
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
 
-  HAL_UART_Receive_DMA(&huart2, receiveData, 2);
-
+//  HAL_UART_Receive_DMA(&huart2, receiveData, 2);
+  HAL_UARTEx_ReceiveToIdle_DMA(&huart2, receiveData, sizeof(receiveData));
+  __HAL_DMA_DISABLE_IT(&hdma_usart2_rx,DMA_IT_HT);
   /* USER CODE END 2 */
 
   /* Infinite loop */
