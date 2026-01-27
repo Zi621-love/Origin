@@ -21,32 +21,32 @@ void AHT20_Init(){
 	}
 }
 
-void AHT20_Read(float *Temperature, float *Humidity){
-	uint8_t sendBuffer[3] = { 0xAC, 0x33, 0x00};
-	uint8_t readBuffer[6] = {0};
-
-	HAL_I2C_Master_Transmit_IT(&hi2c1, AHT20_ADDRESS, sendBuffer, 3);
-	HAL_Delay(75);
-	HAL_I2C_Master_Receive_IT(&hi2c1, AHT20_ADDRESS, readBuffer, 6);
-
-	if((readBuffer[0] & 0x80) == 0x00){
-		uint32_t data = 0;
-		data = ((uint32_t)readBuffer[3] >> 4)+((uint32_t)readBuffer << 4)+((uint32_t)readBuffer << 12);
-		*Humidity = data * 100.0f / (1 << 20);
-		HAL_I2C_Master_Receive(&hi2c1, AHT20_ADDRESS, readBuffer, 1, HAL_MAX_DELAY);
-
-		data = (((uint32_t)readBuffer[3] & 0x0F) << 16) + ((uint32_t)readBuffer[4] << 12) + ((uint32_t)readBuffer[5]);
-		*Temperature = data * 200.0f / (1 << 20) - 50;
-	}
-}
+//void AHT20_Read(float *Temperature, float *Humidity){
+////	uint8_t sendBuffer[3] = { 0xAC, 0x33, 0x00};
+////	uint8_t readBuffer[6] = {0};
+////
+////	HAL_I2C_Master_Transmit_IT(&hi2c1, AHT20_ADDRESS, sendBuffer, 3);
+////	HAL_Delay(75);
+////	HAL_I2C_Master_Receive_IT(&hi2c1, AHT20_ADDRESS, readBuffer, 6);
+////
+////	if((readBuffer[0] & 0x80) == 0x00){
+////		uint32_t data = 0;
+////		data = ((uint32_t)readBuffer[3] >> 4)+((uint32_t)readBuffer << 4)+((uint32_t)readBuffer << 12);
+////		*Humidity = data * 100.0f / (1 << 20);
+////		HAL_I2C_Master_Receive(&hi2c1, AHT20_ADDRESS, readBuffer, 1, HAL_MAX_DELAY);
+////
+////		data = (((uint32_t)readBuffer[3] & 0x0F) << 16) + ((uint32_t)readBuffer[4] << 12) + ((uint32_t)readBuffer[5]);
+////		*Temperature = data * 200.0f / (1 << 20) - 50;
+//	}
+//}
 
 void AHT20_Measure(){
 	static uint8_t sendBuffer[3] = { 0xAC, 0x33, 0x00};
-	HAL_I2C_Master_Transmit_IT(&hi2c1, AHT20_ADDRESS, sendBuffer, 3);
+	HAL_I2C_Master_Transmit_DMA(&hi2c1, AHT20_ADDRESS, sendBuffer, 3);
 }
 
 void AHT20_Get(){
-	 HAL_I2C_Master_Receive_IT(&hi2c1, AHT20_ADDRESS, readBuffer, 6);
+	 HAL_I2C_Master_Receive_DMA(&hi2c1, AHT20_ADDRESS, readBuffer, 6);
 }
 
 void AHT20_Analysis(float *Temperature, float *Humidity){

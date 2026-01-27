@@ -11,7 +11,7 @@
 
 void AHT20_Init();
 
-void AHT20_Read(float *Temperature, float *Humidity);
+//void AHT20_Read(float *Temperature, float *Humidity);
 
 void AHT20_Measure();
 
