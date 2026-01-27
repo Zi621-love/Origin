@@ -47,7 +47,8 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-
+//0：初始状态 发送测量指令 2： 测量命令发送完成 等待75毫秒后读取AHT20数据 3：读取中 4： 读取完成 解析并展示数据然后恢复到初始状态
+uint8_t aht20State = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -103,11 +104,30 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	  AHT20_Read(&temperature, &humidity);
-	  sprintf(message,"温度：%.1f℃, 湿度：%.1f%%\r\n",temperature,humidity);
-	  HAL_UART_Transmit(&huart2,(uint8_t*) message, strlen(message), HAL_MAX_DELAY);
+	  if(aht20State == 0){
+		  AHT20_Measure();
+		  aht20State = 1;
+	  }else if(aht20State == 1){
 
-	  HAL_Delay(1000);
+	  }else if(aht20State == 2){
+		  HAL_Delay(75);
+		  AHT20_Get();
+		  aht20State = 3;
+	  }else if(aht20State == 3){
+
+	  }else if(aht20State == 4){
+		  AHT20_Analysis(&temperature, &humidity);
+		  sprintf(message,"温度：%.1f℃, 湿度：%.1f%%\r\n",temperature,humidity);
+		  HAL_UART_Transmit(&huart2,(uint8_t*) message, strlen(message), HAL_MAX_DELAY);
+
+		  HAL_Delay(1000);
+		  aht20State = 0;
+	  }
+//	  AHT20_Read(&temperature, &humidity);
+//	  sprintf(message,"温度：%.1f℃, 湿度：%.1f%%\r\n",temperature,humidity);
+//	  HAL_UART_Transmit(&huart2,(uint8_t*) message, strlen(message), HAL_MAX_DELAY);
+//
+//	  HAL_Delay(1000);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
