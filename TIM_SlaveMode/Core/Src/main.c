@@ -64,12 +64,7 @@ char updateMsg[] = "自动重装载";
 char triggerMsg[] = "从模式触发";
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
 	if(htim ==&htim2){
-		if(__HAL_TIM_GET_FLAG(htim,TIM_FLAG_TRIGGER) == SET){
-			__HAL_TIM_CLEAR_FLAG(htim,TIM_FLAG_TRIGGER);
-			HAL_UART_Transmit(&huart2, (uint8_t*)triggerMsg, strlen(triggerMsg), 100);
-		}else{
-			HAL_UART_Transmit(&huart2, (uint8_t*)updateMsg, strlen(updateMsg), 100);
-		}
+		HAL_UART_Transmit(&huart2, (uint8_t*)updateMsg, strlen(updateMsg), 100);
 	}
 }
 /* USER CODE END 0 */
@@ -115,6 +110,10 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+	  if(__HAL_TIM_GET_FLAG(&htim2,TIM_FLAG_TRIGGER) == SET){
+	  	__HAL_TIM_CLEAR_FLAG(&htim2,TIM_FLAG_TRIGGER);
+	  	HAL_UART_Transmit(&huart2, (uint8_t*)triggerMsg, strlen(triggerMsg), 100);
+	  }
 	  counter = __HAL_TIM_GET_COUNTER(&htim2);
 	  sprintf(message, "counter:%d", counter);
 	  HAL_UART_Transmit(&huart2, (uint8_t*)message, strlen(message), 100);
@@ -196,7 +195,7 @@ static void MX_TIM2_Init(void)
   {
     Error_Handler();
   }
-  sSlaveConfig.SlaveMode = TIM_SLAVEMODE_RESET;
+  sSlaveConfig.SlaveMode = TIM_SLAVEMODE_GATED;
   sSlaveConfig.InputTrigger = TIM_TS_TI1FP1;
   sSlaveConfig.TriggerPolarity = TIM_TRIGGERPOLARITY_RISING;
   sSlaveConfig.TriggerFilter = 15;
