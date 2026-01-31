@@ -101,6 +101,8 @@ int main(void)
   MX_TIM2_Init();
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
+  __HAL_TIM_CLEAR_IT(&htim2, TIM_IT_UPDATE);
+//  __HAL_TIM_CLEAR_FLAG(&htim2, TIM_FLAG_UPDATE);
   HAL_TIM_Base_Start_IT(&htim2);
   int counter = 0;
   char message[20] = "";
