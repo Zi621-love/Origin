@@ -1,0 +1,4 @@
+../Core/Src/MPU6050.c:5:16:MPU6050_WriteReg	32	static
+../Core/Src/MPU6050.c:10:9:MPU6050_Init	16	static
+../Core/Src/MPU6050.c:22:9:MPU6050_ReadRawData	48	static
+../Core/Src/MPU6050.c:38:6:MPU6050_ConvertToPhysical	48	static
